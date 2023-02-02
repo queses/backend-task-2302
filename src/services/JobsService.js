@@ -2,18 +2,16 @@ const { Op } = require('sequelize')
 
 class JobsService {
     constructor(sequelize) {
-        this.sequelize = sequelize
-        this.models = sequelize.models
+        this._models = sequelize.models
     }
 
     listActive(profileId) {
-        return this.models.Job.findAll({
+        return this._models.Job.findAll({
             where: {
                 paid: { [Op.not]: true }
             },
-            attributes: { exclude: 'Contract' },
             include: {
-                model: this.models.Contract,
+                model: this._models.Contract,
                 attributes: [],
                 where: {
                     status: 'in_progress',

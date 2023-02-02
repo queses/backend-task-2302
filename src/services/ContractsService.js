@@ -2,12 +2,11 @@ const { Op } = require('sequelize')
 
 class ContractsService {
     constructor(sequelize) {
-        this.sequelize = sequelize
-        this.models = sequelize.models
+        this._models = sequelize.models
     }
 
     getById(profileId, id) {
-        return this.models.Contract.findOne({
+        return this._models.Contract.findOne({
             where: {
                 id,
                 [Op.or]: [{ ContractorId: profileId }, { ClientId: profileId }]
@@ -16,7 +15,7 @@ class ContractsService {
     }
 
     getNonTerminated(profileId) {
-        return this.models.Contract.findAll({
+        return this._models.Contract.findAll({
             where: {
                 status: { [Op.ne]: 'terminated' },
                 [Op.or]: [{ ContractorId: profileId }, { ClientId: profileId }]

@@ -2,7 +2,9 @@ const Sequelize = require('sequelize')
 
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: './database.sqlite3'
+    storage: './database.sqlite3',
+    storage: process.env.SEQUELIZE_STORAGE || './database.sqlite3',
+    logging: process.env.SEQUELIZE_NO_LOG ? false : console.log
 })
 
 class Profile extends Sequelize.Model {}
