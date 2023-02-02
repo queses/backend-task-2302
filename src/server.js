@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const { ContractsController } = require('./controllers/ContractsController')
+const { JobsController } = require('./controllers/JobsController')
 
 init()
 
@@ -8,7 +9,7 @@ async function init() {
     const app = express()
     app.use(bodyParser.json())
 
-    app.use(new ContractsController().router)
+    app.use(new ContractsController().router).use(new JobsController().router)
 
     app.use(handleError)
 
@@ -17,7 +18,7 @@ async function init() {
     })
 }
 
-function handleError(req, res, next, err) {
+function handleError(err, req, res, next) {
     console.error(err)
     res.status(500).send('Internal Server Error')
 }

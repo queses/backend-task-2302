@@ -1,8 +1,7 @@
 const { sequelize } = require('../model')
-const { callbackify } = require('util')
+const { asyncHandler } = require('../util')
 
-// Use `callbackify` to catch errors in async function:
-const getProfile = callbackify(async (req, res, next) => {
+const getProfile = asyncHandler(async (req, res, next) => {
     const { Profile } = sequelize.models
 
     const profile = await Profile.findOne({

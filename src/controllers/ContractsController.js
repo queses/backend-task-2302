@@ -2,7 +2,7 @@ const { Router } = require('express')
 const { getProfile } = require('../middleware/getProfile')
 const { sequelize } = require('../model')
 const { ContractsService } = require('../services/ContractsService')
-const { callbackify } = require('util')
+const { asyncHandler } = require('../util')
 
 class ContractsController {
     constructor() {
@@ -11,8 +11,8 @@ class ContractsController {
         const path = '/contracts'
         this.router = Router()
             .use(path, getProfile)
-            .get(path + '/:id', callbackify(this._getById))
-            .get(path, callbackify(this._list))
+            .get(path + '/:id', asyncHandler(this._getById))
+            .get(path, asyncHandler(this._list))
     }
 
     _getById = async (req, res) => {
