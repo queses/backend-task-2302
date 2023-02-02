@@ -1,14 +1,15 @@
-const app = require('./app')
+const express = require('express')
+const bodyParser = require('body-parser')
+const { ContractsController } = require('./controllers/ContractsController')
 
 init()
 
 async function init() {
-    try {
-        app.listen(3001, () => {
-            console.log('Express App Listening on Port 3001')
-        })
-    } catch (error) {
-        console.error(`An error occurred: ${JSON.stringify(error)}`)
-        process.exit(1)
-    }
+    const app = express()
+        .use(bodyParser.json())
+        .use(new ContractsController().router)
+
+    app.listen(3001, () => {
+        console.log('Express App Listening on Port 3001')
+    })
 }
