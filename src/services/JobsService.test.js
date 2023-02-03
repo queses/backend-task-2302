@@ -58,4 +58,77 @@ describe('JobsService', () => {
             [1, 2, 5]
         )
     })
+
+    it('should pay for job', async () => {
+        await Promise.all([
+            models.Profile.create({ ...fixtures.Profile.client, id: 1, balance: 200 }),
+            models.Profile.create({ ...fixtures.Profile.contractor, id: 2, balance: 50 }),
+
+            models.Contract.create({
+                ...fixtures.Contract.inProgress,
+                id: 1,
+                ClientId: 1,
+                ContractorId: 2
+            }),
+
+            models.Job.create({ ...fixtures.Job.unpaid, price: 100, id: 1, ContractId: 1 })
+        ])
+
+        const result = await getSut().pay(1, 1)
+        assert.isUndefined(result.code)
+        assert.isTrue(result.success)
+
+        const [client, contractor, job] = await Promise.all([
+            models.Profile.findByPk(1),
+            models.Profile.findByPk(2),
+            models.Job.findByPk(1)
+        ])
+
+        assert.isTrue(job.paid)
+        assert.instanceOf(job.paymentDate, Date)
+        assert.equal(client.balance, 100)
+        assert.equal(contractor.balance, 150)
+    })
+
+    it('should not pay if not enough money', async () => {
+        await Promise.all([
+            models.Profile.create({ ...fixtures.Profile.client, id: 1, balance: 99 }),
+            models.Profile.create({ ...fixtures.Profile.contractor, id: 2, balance: 50 }),
+
+            models.Contract.create({
+                ...fixtures.Contract.inProgress,
+                id: 1,
+                ClientId: 1,
+                ContractorId: 2
+            }),
+
+            models.Job.create({ ...fixtures.Job.unpaid, price: 100, id: 1, ContractId: 1 })
+        ])
+
+        const result = await getSut().pay(1, 1)
+        assert.isUndefined(result.code)
+        assert.isFalse(result.success)
+        assert.equal(result.reason, 'Not enough money')
+    })
+
+    it('should not pay if already paid', async () => {
+        await Promise.all([
+            models.Profile.create({ ...fixtures.Profile.client, id: 1, balance: 200 }),
+            models.Profile.create({ ...fixtures.Profile.contractor, id: 2, balance: 50 }),
+
+            models.Contract.create({
+                ...fixtures.Contract.inProgress,
+                id: 1,
+                ClientId: 1,
+                ContractorId: 2
+            }),
+
+            models.Job.create({ ...fixtures.Job.paid, price: 100, id: 1, ContractId: 1 })
+        ])
+
+        const result = await getSut().pay(1, 1)
+        assert.isUndefined(result.code)
+        assert.isFalse(result.success)
+        assert.equal(result.reason, 'Job was already paid')
+    })
 })

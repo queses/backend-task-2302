@@ -2,14 +2,16 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const { ContractsController } = require('./controllers/ContractsController')
 const { JobsController } = require('./controllers/JobsController')
+const { BalancesController } = require('./controllers/BalancesController')
 
 init()
 
 async function init() {
     const app = express()
-    app.use(bodyParser.json())
-
-    app.use(new ContractsController().router).use(new JobsController().router)
+        .use(bodyParser.json())
+        .use(new ContractsController().router)
+        .use(new JobsController().router)
+        .use(new BalancesController().router)
 
     app.use(handleError)
 

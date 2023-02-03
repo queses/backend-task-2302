@@ -1,26 +1,18 @@
 const { Router } = require('express')
-const { getProfile } = require('../middleware/getProfile')
 const { sequelize } = require('../model')
 const { JobsService } = require('../services/JobsService')
 const { asyncHandler } = require('../util')
 
-class JobsController {
+class BalancesController {
     constructor() {
         this._service = new JobsService(sequelize)
 
-        const path = '/jobs'
+        const path = '/balances'
         this.router = Router()
-            .use(path, getProfile)
-            .get(path, asyncHandler(this._list))
-            .post(path + '/:id/pay', asyncHandler(this._pay))
+            .post(path + '/deposit/:userId', asyncHandler(this._deposit))
     }
 
-    _list = async (req, res) => {
-        const items = await this._service.listActive(req.profile.id)
-        res.json(items)
-    }
-
-    _pay = async (req, res) => {
+    _deposit = async (req, res) => {
         const result = await this._service.pay(req.profile.id, req.params.id)
         if (result.code) {
             return res.status(result.code).json({ message: result.message })
@@ -30,4 +22,4 @@ class JobsController {
     }
 }
 
-module.exports = { JobsController }
+module.exports = { BalancesController }
