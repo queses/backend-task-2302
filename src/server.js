@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const { ContractsController } = require('./controllers/ContractsController')
 const { JobsController } = require('./controllers/JobsController')
 const { BalancesController } = require('./controllers/BalancesController')
+const { AdminController } = require('./controllers/AdminController')
 
 init()
 
@@ -12,6 +13,7 @@ async function init() {
         .use(new ContractsController().router)
         .use(new JobsController().router)
         .use(new BalancesController().router)
+        .use(new AdminController().router)
 
     app.use(handleError)
 

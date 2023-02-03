@@ -1,11 +1,11 @@
 const { Router } = require('express')
 const { sequelize } = require('../model')
-const { JobsService } = require('../services/JobsService')
+const { BalancesService } = require('../services/BalancesService')
 const { asyncHandler } = require('../util')
 
 class BalancesController {
     constructor() {
-        this._service = new JobsService(sequelize)
+        this._service = new BalancesService(sequelize)
 
         const path = '/balances'
         this.router = Router()
@@ -13,7 +13,7 @@ class BalancesController {
     }
 
     _deposit = async (req, res) => {
-        const result = await this._service.pay(req.profile.id, req.params.id)
+        const result = await this._service.deposit(req.params.userId, req.body.amount)
         if (result.code) {
             return res.status(result.code).json({ message: result.message })
         }
