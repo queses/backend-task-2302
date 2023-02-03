@@ -1,6 +1,16 @@
 # DEEL BACKEND TASK
 
-  
+## Message for reviewers
+
+Hello! My name is Max.
+You can find the Express handles definitions in `./src/controllers`. The business logic lies in `./src/services`.
+
+I have decided to add unit tests for comfort development. However they use an in-memory SQLite instance, which makes them more like integration tests. Maybe it's a controversial decision, but I have decided not to mock database access because:
+- The main complexity in the code is in database access
+- Sequelize is non-trivial to mock
+- Time is limited
+
+## Description
 
 💫 Welcome! 🎉
 
